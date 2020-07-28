@@ -27,6 +27,7 @@ function handleDeviceOrientation(event) {
         window.roll = z;
     }
 }
+
 window.addEventListener("deviceorientation", handleDeviceOrientation);
 
 // ------------------------ 
@@ -35,7 +36,6 @@ controls = new(function() {
     this.yawMultiplier = 2;
     this.pitchMultiplier = 1;
     this.rollMultiplier = 1;
-    this.distanceMultiplier = 1;
     this.FOV = 35;
     this.filterSpeed = 0.9;
     this.oneEuroFilterBeta = 0.06;
@@ -47,7 +47,6 @@ function setupDatGui() {
     gui.add(controls, "yawMultiplier", 0.0, 5.0);
     gui.add(controls, "pitchMultiplier", 0.0, 5.0);
     gui.add(controls, "rollMultiplier", 0.0, 5.0);
-    gui.add(controls, "distanceMultiplier", 0.0, 5.0);
     gui.add(controls, "FOV", 30.0, 90.0);
     gui.add(controls, "filterSpeed", 0.1, 1.0);
 
@@ -92,30 +91,11 @@ async function setupCamera() {
     });
 }
 
-let faceWidthSaved = -1.0;
-var faceDistance = 1.0;
-var faceDistanceFar = 0.0;
-
-// Convert from degrees to radians.
-Math.radians = function(degrees) {
-    return degrees * Math.PI / 180;
-}
-
-// Convert from radians to degrees.
-Math.degrees = function(radians) {
-    return radians * 180 / Math.PI;
-}
-
 async function renderPrediction() {
     const predictions = await model.estimateFaces(video);
     ctx.drawImage(video, 0, 0, videoWidth, videoHeight, 0, 0, canvas.width, canvas.height);
 
     document.getElementById("stats").innerHTML = "";
-	
-	if (predictions.length == 0) {
-		faceWidthSaved = -1.0;
-	}
-	
     if (predictions.length > 0) {
         predictions.forEach((prediction) => {
             try {
@@ -183,13 +163,6 @@ async function renderPrediction() {
             pitchOptimized = pitch * parseFloat(controls.pitchMultiplier);
             rollOptimized = roll * parseFloat(controls.rollMultiplier);
 
-            // FACE DEPTH TRACKER
-			let faceWidth = prediction.boundingBox.bottomRight[0][1] - prediction.boundingBox.topLeft[0][1];
-			if(faceWidthSaved < 0) faceWidthSaved = faceWidth;
-			
-			faceDistance = map(faceWidth, faceWidthSaved * 0.5, faceWidthSaved * 1.5, 0.0, 1.0) * controls.distanceMultiplier;
-
-            // FACE ORIENTATION TRACKER
             if (window.modeTracker == "facetracker") {
                 window.yaw = yawOptimized;
                 window.pitch = pitchOptimized;
@@ -197,6 +170,7 @@ async function renderPrediction() {
             }
         });
     }
+
     requestAnimationFrame(renderPrediction);
 }
 
@@ -231,15 +205,15 @@ async function trackerMain() {
     });
     renderPrediction();
 
-	// wait for loaded audio
-	var timer = setInterval(function() {
-		if (m1SoundPlayerClose.isReady && m1SoundPlayerFar.isReady) {
-			clearInterval(timer);
-			
-			info.innerHTML = "";
-			document.getElementById("main").style.display = "";
-		}
-	}, 1000);
+    // wait for loaded audio
+    var timer = setInterval(function() {
+        if (sound.isReady) {
+            clearInterval(timer);
+            
+            info.innerHTML = "";
+            document.getElementById("main").style.display = "";
+        }
+    }, 1000);
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -275,11 +249,10 @@ Mach1DecodeModule().then(function(m1DecodeModule) {
     m1Decode.setFilterSpeed(0.9);
 });
 
-let m1SoundPlayerClose = new Mach1SoundPlayer();
-m1SoundPlayerClose.setup(["audio/m1spatialclose/T1.ogg", "audio/m1spatialclose/T2.ogg", "audio/m1spatialclose/T3.ogg", "audio/m1spatialclose/T4.ogg", "audio/m1spatialclose/B5.ogg", "audio/m1spatialclose/B6.ogg", "audio/m1spatialclose/B7.ogg", "audio/m1spatialclose/B8.ogg"]);
+var audioFiles8 = ["audio/Spatial-Ambiences/1/1.ogg", "audio/Spatial-Ambiences/1/2.ogg", "audio/Spatial-Ambiences/1/3.ogg", "audio/Spatial-Ambiences/1/4.ogg", "audio/Spatial-Ambiences/1/5.ogg", "audio/Spatial-Ambiences/1/6.ogg", "audio/Spatial-Ambiences/1/7.ogg", "audio/Spatial-Ambiences/1/8.ogg"];
 
-let m1SoundPlayerFar = new Mach1SoundPlayer();
-m1SoundPlayerFar.setup(["audio/m1spatialfar/T1.ogg", "audio/m1spatialfar/T2.ogg", "audio/m1spatialfar/T3.ogg", "audio/m1spatialfar/T4.ogg", "audio/m1spatialfar/B5.ogg", "audio/m1spatialfar/B6.ogg", "audio/m1spatialfar/B7.ogg", "audio/m1spatialfar/B8.ogg"]);
+let sound = new Mach1SoundPlayer();
+sound.setup(audioFiles8);
 
 function Decode(yaw, pitch, roll) {
     if (m1Decode != null && yaw != null && pitch != null && roll != null) {
@@ -288,10 +261,7 @@ function Decode(yaw, pitch, roll) {
         let decoded = m1Decode.decode(yaw, pitch, roll);
         m1Decode.endBuffer();
 
-        // APPLY DISTANCE CROSSFADE BETWEEN TWO MACH1SPATIAL MIXES
-        window.faceDistanceFar = Math.abs(window.faceDistance - 1.0);
-        m1SoundPlayerClose.updateGains(decoded.map(x => x * window.faceDistance));
-        m1SoundPlayerFar.updateGains(decoded.map(x => x * window.faceDistanceFar));
+        sound.updateGains(decoded);
 
         var strDebug = "";
         decoded.forEach(function(d) {
@@ -301,15 +271,11 @@ function Decode(yaw, pitch, roll) {
 }
 
 function Play() {
-    m1SoundPlayerClose.play();
-	 if (window.modeTracker == "facetracker") {
-		 m1SoundPlayerFar.play();
-	 }
+    sound.play();
 }
 
 function Stop() {
-    m1SoundPlayerClose.stop();
-	m1SoundPlayerFar.stop();
+    sound.stop();
 }
 
 
