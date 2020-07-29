@@ -28,7 +28,6 @@
 		</div>
 
 		<iframe id="viewer" name="viewer" allowfullscreen allowvr onmousewheel=""></iframe>
-		<a id="button" target="_blank"><img src="resources/ic_code_black_24dp.svg"></a>
 
 		<script src="files.js"></script>
 
@@ -39,7 +38,6 @@
 		var filterInput = document.getElementById( 'filterInput' );
 		var exitSearchButton = document.getElementById( 'exitSearchButton' );
 		var expandButton = document.getElementById( 'expandButton' );
-		var viewSrcButton = document.getElementById( 'button' );
 		var panelScrim = document.getElementById( 'panelScrim' );
 
 		var previewsToggler = document.getElementById( 'previewsToggler' );
@@ -52,7 +50,6 @@
 
 		function init() {
 			content.appendChild( container );
-			viewSrcButton.style.display = 'none';
 
 			for ( var key in files ) {
 				var section = files[ key ];
@@ -162,9 +159,6 @@
 			panel.classList.remove( 'open' );
 			selected = file;
 			// Reveal "View source" button and set attributes to this example
-			viewSrcButton.style.display = '';
-			//viewSrcButton.href = 'https://github.com/Mach1Studios/m1-sdk/blob/master/examples/' + selected + '.html';
-			//viewSrcButton.title = 'View source code for ' + getName( selected ) + ' on GitHub';
 		}
 
 		function updateFilter() {
