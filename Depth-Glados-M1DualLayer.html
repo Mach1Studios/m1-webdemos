@@ -44,7 +44,6 @@
                 width: 98px;
                 text-decoration: none;
                 text-align: center;
-                text-shadow: 0px 1px 0px #000;
             }
             .button:hover {
                 background-color: #EEEEEE;
@@ -61,10 +60,9 @@
                 margin: -1px;
                 padding: 0;
                 border: 0;
-                text-shadow: 0px 1px 0px #000;
             }
             input[type="radio"].css-checkbox + label.css-label {
-                color: #ffffff;
+                color: #000;
                 padding-left: 27px;
                 height: 23px;
                 display: inline-block;
@@ -115,7 +113,7 @@
                 </div>
             </div>
             <div style="position: absolute; top: 20px; left: 20px;">
-                <table style="background: #5C5C5C; padding-right: 15px;">
+                <table style="padding-right: 15px;">
                     <tr>
                         <td>
                             <input type="radio" name="mode" id="radio1" class="css-checkbox" checked="checked" value="facetracker" onclick="selectTracker()" />
@@ -140,6 +138,22 @@
         </div>
 
         <div id="stats" style="position:absolute;bottom:5px;left:5px;"></div>
-        <div id="info" style="position: relative; margin: auto; margin-top: 50vh; text-align: center; font-size: 3em;">loading...</div>
+        <div id="info" style="position:relative; margin:auto; margin-top:50vh; text-align:center; font-size:3em;">loading...
+            <div id="loader" style="position:relative; margin:auto; margin-top:50vh; text-align:center;">
+                <svg version="1.1" id="L3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                      viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
+                    <circle fill="none" stroke="#fff" stroke-width="4" cx="50" cy="50" r="44" style="opacity:0.5;"/>
+                      <circle fill="#fff" stroke="#e74c3c" stroke-width="3" cx="8" cy="54" r="6" >
+                        <animateTransform
+                          attributeName="transform"
+                          dur="2s"
+                          type="rotate"
+                          from="0 50 48"
+                          to="360 50 52"
+                          repeatCount="indefinite" />
+                    </circle>
+                </svg>
+            </div>
+        </div>
     </body>
 </html>

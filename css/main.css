@@ -616,4 +616,15 @@ iframe {
 	#viewer {
 		padding-left: 0;
 	}
+
+	.dg .cr.number input[type="text"]{
+		color:#fff !important;
+	}
+	.slider-fg{
+		background: #eee !important;
+	}
+	.slider-fg {
+		background:#fff !important;
+	}
+
 }
