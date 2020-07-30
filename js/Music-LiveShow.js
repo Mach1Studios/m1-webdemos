@@ -249,7 +249,7 @@ Mach1DecodeModule().then(function(m1DecodeModule) {
     m1Decode.setFilterSpeed(0.9);
 });
 
-var audioFiles8 = ["audio/MuseLive-Loc8/1.ogg", "audio/MuseLive-Loc8/2.ogg", "audio/MuseLive-Loc8/3.ogg", "audio/MuseLive-Loc8/4.ogg", "audio/MuseLive-Loc8/5.ogg", "audio/MuseLive-Loc8/6.ogg", "audio/MuseLive-Loc8/7.ogg", "audio/MuseLive-Loc8/8.ogg"];
+var audioFiles8 = ["audio/Music-LiveShow-l8/1.ogg", "audio/Music-LiveShow-l8/2.ogg", "audio/Music-LiveShow-l8/3.ogg", "audio/Music-LiveShow-l8/4.ogg", "audio/Music-LiveShow-l8/5.ogg", "audio/Music-LiveShow-l8/6.ogg", "audio/Music-LiveShow-l8/7.ogg", "audio/Music-LiveShow-l8/8.ogg"];
 
 let sound = new Mach1SoundPlayer();
 sound.setup(audioFiles8);
