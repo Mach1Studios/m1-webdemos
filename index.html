@@ -18,10 +18,6 @@
 			</div>
 			<div id="panelScrim"></div>
 			<div id="contentWrapper">
-				<div id="inputWrapper">
-					<input placeholder="" type="text" id="filterInput" autocorrect="off" autocapitalize="off" spellcheck="false" />
-					<div id="exitSearchButton"></div>
-				</div>
 				<div id="content" class="minimal">
 				</div>
 			</div>
@@ -35,12 +31,8 @@
 		var panel = document.getElementById( 'panel' );
 		var content = document.getElementById( 'content' );
 		var viewer = document.getElementById( 'viewer' );
-		var filterInput = document.getElementById( 'filterInput' );
-		var exitSearchButton = document.getElementById( 'exitSearchButton' );
 		var expandButton = document.getElementById( 'expandButton' );
 		var panelScrim = document.getElementById( 'panelScrim' );
-
-		var previewsToggler = document.getElementById( 'previewsToggler' );
 
 		var links = {};
 		var selected = null;
@@ -70,37 +62,6 @@
 				loadFile( window.location.hash.substring( 1 ) );
 			}
 
-			filterInput.value = extractQuery();
-
-			if ( filterInput.value !== '' ) {
-				panel.classList.add( 'searchFocused' );
-			}
-
-			updateFilter();
-
-			// Events
-			filterInput.onfocus = function ( ) {
-				panel.classList.add( 'searchFocused' );
-			};
-
-			filterInput.onblur = function ( ) {
-				if ( filterInput.value === '' ) {
-
-					panel.classList.remove( 'searchFocused' );
-				}
-			};
-
-			exitSearchButton.onclick = function ( ) {
-				filterInput.value = '';
-				updateFilter();
-				panel.classList.remove( 'searchFocused' );
-			};
-
-			filterInput.addEventListener( 'input', function () {
-				updateFilter();
-			} );
-
-
 			expandButton.addEventListener( 'click', function ( event ) {
 				event.preventDefault();
 				panel.classList.toggle( 'open' );
@@ -109,11 +70,6 @@
 			panelScrim.onclick = function ( event ) {
 				event.preventDefault();
 				panel.classList.toggle( 'open' );
-			};
-
-			previewsToggler.onclick = function ( event ) {
-				event.preventDefault();
-				content.classList.toggle( 'minimal' );
 			};
 
 			// iOS iframe auto-resize workaround
@@ -161,42 +117,6 @@
 			// Reveal "View source" button and set attributes to this example
 		}
 
-		function updateFilter() {
-			var v = filterInput.value.trim();
-			if ( v !== '' ) {
-				window.history.replaceState( {}, '', '?q=' + v + window.location.hash );
-			} else {
-				window.history.replaceState( {}, '', window.location.pathname + window.location.hash );
-			}
-
-			var exp = new RegExp( v, 'gi' );
-			for ( var key in files ) {
-				var section = files[ key ];
-				for ( var i = 0; i < section.length; i ++ ) {
-					filterExample( section[ i ], exp );
-				}
-			}
-			layoutList();
-		}
-
-		function filterExample( file, exp ) {
-			var link = links[ file ];
-			var name = getName( file );
-			if ( file in tags ) file += ' ' + tags[ file ].join( ' ' );
-			var res = file.match( exp );
-			var text;
-			if ( res && res.length > 0 ) {
-				link.classList.remove( 'hidden' );
-				for ( var i = 0; i < res.length; i ++ ) {
-					text = name.replace( res[ i ], '<b>' + res[ i ] + '</b>' );
-				}
-				link.querySelector( '.title' ).innerHTML = text;
-			} else {
-				link.classList.add( 'hidden' );
-				link.querySelector( '.title' ).innerHTML = name;
-			}
-		}
-
 		function getName( file ) {
 			var name = file.split( '-' );
 			return name.join( ' / ' );
@@ -221,14 +141,6 @@
 					element.classList.remove( 'hidden' );
 				}
 			}
-		}
-
-		function extractQuery() {
-			var p = window.location.search.indexOf( '?q=' );
-			if ( p !== - 1 ) {
-				return window.location.search.substr( 3 );
-			}
-			return '';
 		}
 
 		function createElementFromHTML( htmlString ) {
