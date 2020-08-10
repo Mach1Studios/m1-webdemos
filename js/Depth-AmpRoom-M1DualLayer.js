@@ -270,7 +270,8 @@ const progress = {
 
 const waitingSounds = () => new Promise((resolve, reject) => {
     let timer = setInterval(() => {
-        progress.change(m1SoundPlayerClose.getCountOfReadySound() + m1SoundPlayerFar.getCountOfReadySound()); // update loading info
+        // TODO: Setup for multiple calls to `getCountOfReadySound()`
+        progress.change(m1SoundPlayerClose.getCountOfReadySound()); // update loading info
         if (m1SoundPlayerClose.isReady() && m1SoundPlayerFar.isReady()) {
             clearInterval(timer);
             resolve();
