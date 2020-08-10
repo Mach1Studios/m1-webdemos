@@ -1,7 +1,57 @@
 // ------------------------
 window.modeTracker = "";
 
+const boseARDeviceElement = document.querySelector("bose-ar-device");
+const boseAROrder = 'YXZ';
+const boseARConfig = {
+    order : boseAROrder,
+    euler : new THREE.Euler(undefined, undefined, undefined, boseAROrder),
+    eulerOffset : new THREE.Euler(undefined, undefined, undefined, boseAROrder),
+    recallibrate : true,
+    callibrate() {
+        this.eulerOffset.copy(this.euler);
+        this.recallibrate = false;
+    },
+    eulerScalar : {x:1, y:1, z:1},
+}
+
+boseARDeviceElement.setAttribute('double-tap', '');
+boseARDeviceElement.addEventListener('doubleTap', event => {
+    boseARConfig.recallibrate = true;
+});
+
+boseARDeviceElement.addEventListener("rotation", event => {
+    boseARConfig.euler.x = Number(event.target.getAttribute("rotationpitch")) + (Math.PI/2);
+    boseARConfig.euler.y = Number(event.target.getAttribute("rotationyaw"));
+    boseARConfig.euler.z = Number(event.target.getAttribute("rotationroll"));
+
+    if(boseARConfig.recallibrate)
+        boseARConfig.callibrate();
+
+    boseARConfig.euler.x = (boseARConfig.euler.x - boseARConfig.eulerOffset.x) * boseARConfig.eulerScalar.x;
+    boseARConfig.euler.y = (boseARConfig.euler.y - boseARConfig.eulerOffset.y) * boseARConfig.eulerScalar.y;
+    boseARConfig.euler.z = (boseARConfig.euler.z - boseARConfig.eulerOffset.z) * boseARConfig.eulerScalar.z;
+
+    const pitch = radians_to_degrees(boseARConfig.euler.x);
+    const yaw = radians_to_degrees(boseARConfig.euler.y);
+    const roll = radians_to_degrees(boseARConfig.euler.z);
+
+    rotationPitch.value = pitch;
+    rotationYaw.value = yaw;
+    rotationRoll.value = roll;
+
+    if (window.modeTracker == "bosear") {
+        //TODO: reimplement multipliers and reset all to 1 when `bosear` mode selected
+        window.yaw = yaw;
+        window.pitch = pitch;
+        window.roll = roll;
+    }
+});
+
 function selectTracker() {
+    // NOTE: Clear all warning messages
+    document.getElementById("warning").innerHTML = '';
+
     var ele = document.getElementsByName("mode");
     for (i = 0; i < ele.length; i++) {
         if (ele[i].checked) {
@@ -10,8 +60,14 @@ function selectTracker() {
     }
 }
 
+function enableBoseAR() {
+    var ele = document.getElementById("boseRate");
+    boseARDeviceElement.setAttribute('rotation', ele.options[ele.selectedIndex].value);
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
     selectTracker();
+    enableBoseAR();
 })
 
 // ------------------------
@@ -19,7 +75,7 @@ function handleDeviceOrientation(event) {
     var x = event.beta;
     var y = event.alpha;
     var z = event.gamma;
-    console.log(x, y, z);
+    console.info(x, y, z);
 
     if (window.modeTracker == "device") {
         window.yaw = x;
@@ -108,6 +164,7 @@ Math.degrees = function(radians) {
 
 async function renderPrediction() {
     const predictions = await model.estimateFaces(video);
+    const warningMessage = 'WARNING: UNABLE TO TRACK FACE!';
     ctx.drawImage(video, 0, 0, videoWidth, videoHeight, 0, 0, canvas.width, canvas.height);
 
     document.getElementById("stats").innerHTML = "";
@@ -116,16 +173,18 @@ async function renderPrediction() {
         faceWidthSaved = -1.0;
     }
     
+    document.getElementById("warning").innerHTML = (window.modeTracker === "facetracker" && predictions.length === 0) ? warningMessage : "";
+
     if (predictions.length > 0) {
         predictions.forEach((prediction) => {
             try {
+                document.getElementById("warning").innerHTML = (prediction.faceInViewConfidence < 1) ? warningMessage : '';
                 document.getElementById("stats").innerHTML += "confidence: " + prediction.faceInViewConfidence.toFixed(4);
             } catch (err) {
                 document.getElementById("stats").innerHTML = err.message;
             }
 
             const keypoints = prediction.scaledMesh;
-            // console.log(keypoints[0][2])
 
             for (let i = 0; i < keypoints.length; i++) {
                 const x = keypoints[i][0];
@@ -197,17 +256,39 @@ async function renderPrediction() {
             }
         });
     }
+
     requestAnimationFrame(renderPrediction);
 }
 
+const progress = {
+  element: '<img class="svg-loader" src="/img/spinner.svg"><p>loading...</p><p id="progress"></p>',
+  change(current) {
+    const progress = document.getElementById('progress');
+    progress.innerHTML = `${current}%`;
+  }
+}
+
+const waitingSounds = () => new Promise((resolve, reject) => {
+    let timer = setInterval(() => {
+        progress.change(m1SoundPlayerClose.getCountOfReadySound() + m1SoundPlayerFar.getCountOfReadySound()); // update loading info
+        if (m1SoundPlayerClose.isReady() && m1SoundPlayerFar.isReady()) {
+            clearInterval(timer);
+            resolve();
+        }
+    }, 500);
+});
+
 async function trackerMain() {
     var info = document.getElementById("info");
-    info.innerHTML = "loading...";
+    info.innerHTML = progress.element;
     document.getElementById("main").style.display = "none";
 
-    await tf.setBackend("webgl");
+    await Promise.all([
+      waitingSounds(),
+      tf.setBackend("webgl"),
+      setupCamera(),
+    ]);
 
-    await setupCamera();
     video.play();
     videoWidth = video.videoWidth;
     videoHeight = video.videoHeight;
@@ -229,17 +310,11 @@ async function trackerMain() {
     model = await facemesh.load({
         maxFaces: 1
     });
-    renderPrediction();
+    await renderPrediction();
 
     // wait for loaded audio
-    var timer = setInterval(function() {
-        if (m1SoundPlayerClose.isReady && m1SoundPlayerFar.isReady) {
-            clearInterval(timer);
-            
-            info.innerHTML = "";
-            document.getElementById("main").style.display = "";
-        }
-    }, 1000);
+    info.innerHTML = "";
+    document.getElementById("main").style.display = "";
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -248,7 +323,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 })
 
 function DisplayDebug() {
-  var output = document.getElementById("3dview");
+  var output = document.getElementById("modelview");
   if (output.style.display === "none") {
     output.style.display = "";
   } else {
@@ -260,7 +335,13 @@ function DisplayDebug() {
   } else {
     video.style.display = "none";
   }
-} 
+  var boseaStats = document.getElementById("bosearstats");
+  if (boseaStats.style.display === "none") {
+    boseaStats.style.display = "";
+  } else {
+    boseaStats.style.display = "none";
+  }
+}
 
 // ------------------------
 // Mach1 Spatial & Audio Handling
@@ -333,8 +414,8 @@ var mouseY = 0;
 var targetX = 0;
 var targetY = 0;
 
-var width = 640; //window.innerWidth;
-var height = 480; //window.innerHeight;
+var width = 320; //window.innerWidth;
+var height = 240; //window.innerHeight;
 
 var windowHalfX;
 var windowHalfY;
@@ -357,7 +438,7 @@ window.createOneEuroFilters = function createOneEuroFilters() {
 
 function init() {
     mainWindow = document.getElementById("main");
-    container = document.getElementById("3dview"); //document.createElement("div");
+    container = document.getElementById("modelview"); //document.createElement("div");
 
     camera = new THREE.PerspectiveCamera(27, width / height, 1, 10000);
     camera.position.z = 2500;
@@ -390,7 +471,7 @@ function init() {
         createScene(gltf.scene.children[0].geometry, 100, material);
     });
 
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
 

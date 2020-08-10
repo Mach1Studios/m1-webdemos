@@ -3,6 +3,15 @@
     <head>
         <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
         <meta content="utf-8" http-equiv="encoding" />
+
+        <link rel="preload" href="/img/spinner.svg" as="image">
+
+        <!--
+        Bose AR SDK supplied from https://github.com/zakaton/Bose-Frames-Web-SDK
+        Please visit the github link above for the most recently maintained minified js
+        -->
+        <script src="js/bose-ar-web-sdk.min.js"></script>
+
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/facemesh"></script>
@@ -21,7 +30,6 @@
 
         <script src="js/Mach1SoundPlayer.js"></script>
         <script src="js/Mach1Decode.js"></script>
-        <script src="js/Recording-Cheetah.js"></script>
 
         <style type="text/css">
             @font-face {
@@ -36,6 +44,11 @@
                 src: local('Roboto Mono Medium'), local('RobotoMono-Medium'), url('resources/RobotoMono-Medium.woff2') format('woff2');
                 font-style: normal;
                 font-weight: 500;
+            }
+            html, body {
+              height: 100%;
+              margin: 0px;
+              overflow: hidden;
             }
             * {
                 font-family: 'Roboto Mono', monospace;
@@ -71,24 +84,48 @@
               margin-bottom: 7px;
               position: absolute;
             }
-            #compassContainer {
+            #compass {
+                height: 18vh;
+            }
+            #modelview, #compassContainer {
                 text-align: center;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                margin-top: 25vh;
+
+                padding-top: 41vh;
+            }
+            #modelview {
+              padding-top: 5vh;
+            }
+            #modelview canvas {
+              background: transparent;
+            }
+            #warning {
+              position:relative;
+              margin:auto;
+              text-align:center;
+              font-size:2em;
+              padding: 1.5em;
+              color: #5C5C5C;
+            }
+            #boseRate {
+              overflow: hidden;
+              min-width: fit-content;
+              width: 100%;
             }
             .containerOuter {
               background: var(--hl-yellow);
               border-radius: 8px;
               box-shadow: 2px 6px 20px 2px rgba(10,10,120,0.15);
-              max-width: 20vw;
             }
             .containerInner {
               position: relative;
               margin: 20px;
-              overflow: hidden;
               width: 160px;
+            }
+            .containerInner .button:last-child {
+              margin-bottom: 5px;
             }
             .hidden {
               display: none;
@@ -109,6 +146,10 @@
             .entry:nth-child(6) {
               left: 8px;
               top: 108px;
+            }
+            .entry:nth-child(8) {
+              left: 8px;
+              top: 158px;
             }
             .circle {
               border: 2px solid #5C5C5C;
@@ -156,6 +197,9 @@
             .hidden:nth-child(5):checked ~ .highlight {
               transform: translateY(100px);
             }
+            .hidden:nth-child(7):checked ~ .highlight {
+              transform: translateY(150px);
+            }
             .hidden:nth-child(1):checked + .entry .circle {
               border-color: #5C5C5C;
             }
@@ -163,6 +207,9 @@
               border-color: #5C5C5C;
             }
             .hidden:nth-child(5):checked + .entry .circle {
+              border-color: #5C5C5C;
+            }
+            .hidden:nth-child(7):checked + .entry .circle {
               border-color: #5C5C5C;
             }
             /* DatGUI Styling */
@@ -237,43 +284,35 @@
             .dg .cr.number input[type="text"]{
                 color: #5C5C5C;
             }
-
+            .svg-loader {
+              height: 18vh;
+            }
         </style>
     </head>
     <body>
         <div id="main" style="display:none;">
-            <div class="container">
-                <div id="compassContainer">
-                    <img id="compass" src="img/nav-compass.svg" width="150" height="150"/>
-                </div>
-            </div>
-            <div class="container" style="height:50vh;width:auto;bottom:0px;">
-                <div class="canvas-wrapper">
-                    <canvas id="output" style="display:none;"></canvas>
-                    <video id="video" playsinline style="-webkit-transform: scaleX(-1); transform: scaleX(-1); visibility: hidden; width: auto; height: auto;"></video>
-                </div>
-                <div class="canvas-wrapper" id="3dview" style="width: 640px; height: 480px;display:none;">
-                </div>
-            </div>
             <div class="containerOuter" style="position:absolute; top:20px; left:30px;">
-              <div class="containerInner">
+              <div class="containerInner" style="min-height: 190px;">
                 <input type="radio" name="mode" id="radio1" class="hidden" checked="checked" value="facetracker" onclick="selectTracker()">
                 <label class="entry" for="radio1"><div class="circle"></div><div class="entry-label">Facetracker</div></label>
                 <input type="radio" name="mode" id="radio2" class="hidden" value="device" onclick="selectTracker()">
                 <label class="entry" for="radio2"><div class="circle"></div><div class="entry-label">Device</div></label>
                 <input type="radio" name="mode" id="radio3" class="hidden" value="touch" onclick="selectTracker()" >
                 <label class="entry" for="radio3"><div class="circle"></div><div class="entry-label">Touch</div></label>
+                <input type="radio" name="mode" id="radio4" class="hidden" value="bosear" onclick="selectTracker()" >
+                <label class="entry" for="radio4"><div class="circle"></div><div class="entry-label" style="margin-top:-3px;">BoseAR&nbsp;<bose-ar-device></bose-ar-device></div></label>
                 <div class="highlight"></div>
                 <div class="overlay"></div>
               </div>
             </div>
-            <svg width="0" height="0" viewBox="0 0 40 140">
+            <svg width="0" height="0" viewBox="0 0 40 190">
               <defs>
                 <mask id="holes">
                   <rect x="0" y="0" width="100" height="140" fill="white" />
                   <circle r="12" cx="20" cy="20" fill="black"/>
                   <circle r="12" cx="20" cy="70" fill="black"/>
                   <circle r="12" cx="20" cy="120" fill="black"/>
+                  <circle r="12" cx="20" cy="170" fill="black"/>
                 </mask>
               </defs>
             </svg>
@@ -284,25 +323,54 @@
                     <button onclick="DisplayDebug()" class="button">Debug</button>
                 </div>
             </div>
+            <div id="bosearstats" class="containerOuter" style="display: none; position: absolute; top: 20px; left: 450px;">
+                <div class="containerInner">
+                    <form id="Rotation">
+                        <h3>Rotation</h3>
+                        <select id="boseRate" size="5" oninput="enableBoseAR()">
+                            <option selected value=0>disabled</option>
+                            <option value=20>very fast (20ms)</option>
+                            <option value=40>fast (40ms)</option>
+                            <option value=80>normal (80ms)</option>
+                            <option value=160>slow (160ms)</option>
+                        </select>
+                        <br>
+                        <br>
+                        <label for=rotationYaw>yaw&nbsp;&nbsp;</label>
+                        <input id=rotationYaw readonly size=2><br>
+                        <label for=rotationPitch>pitch</label>
+                        <input id=rotationPitch readonly size=2><br>
+                        <label for=rotationRoll>roll&nbsp;</label>
+                        <input id=rotationRoll readonly size=2>
+                    </form>
+                </div>
+            </div>
+            <div class="container">
+                <div id="compassContainer">
+                    <img id="compass" src="/img/nav-compass.svg"/>
+                </div>
+                <div id="warning"></div>
+            </div>
+            <div class="container" style="position: absolute; bottom: 5px; right: 5px;">
+                <div class="canvas-wrapper">
+                    <canvas id="output" style="display:none;"></canvas>
+                    <video id="video" playsinline style="-webkit-transform: scaleX(-1); transform: scaleX(-1); visibility: hidden; width: auto; height: auto; position: absolute; bottom: 5px; right: 5px;"></video>
+                </div>
+            </div>
+            <div class="container">
+                <div id="modelview" class="canvas-wrapper" style="display:none;"></div>
+            </div>
         </div>
 
         <div id="stats" style="position:absolute;bottom:5px;left:5px;"></div>
-        <div id="info" style="position:relative; margin:auto; margin-top:50vh; text-align:center; font-size:3em;">loading...
-            <div id="loader" style="position:relative; margin:auto; margin-top:50vh; text-align:center;">
-                <svg version="1.1" id="L3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                      viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
-                    <circle fill="none" stroke="#fff" stroke-width="4" cx="50" cy="50" r="44" style="opacity:0.5;"/>
-                      <circle fill="#fff" stroke="#e74c3c" stroke-width="3" cx="8" cy="54" r="6" >
-                        <animateTransform
-                          attributeName="transform"
-                          dur="2s"
-                          type="rotate"
-                          from="0 50 48"
-                          to="360 50 52"
-                          repeatCount="indefinite" />
-                    </circle>
-                </svg>
-            </div>
-        </div>
+        <div id="info" style="position:relative; margin:auto; margin-top:41vh; text-align:center; font-size:3em;"></div>
+
+        <script src="js/Recording-Cheetah.js"></script>
+        <!-- Loading / Progress Bar Handler -->
+        <script id="__bs_script__">
+          //<![CDATA[
+          document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.26.12'><\/script>".replace("HOST", location.hostname));
+          //]]>
+        </script>
     </body>
 </html>
