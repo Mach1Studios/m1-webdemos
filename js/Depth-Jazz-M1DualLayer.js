@@ -148,9 +148,9 @@ async function setupCamera() {
     });
 }
 
-let faceWidthSaved = -1.0;
-var faceDistance = 1.0;
-var faceDistanceFar = 0.0;
+window.faceWidthSaved = -1.0;
+window.faceDistance = 1.0;
+window.faceDistanceFar = 0.0;
 
 // Convert from degrees to radians.
 Math.radians = function(degrees) {
@@ -170,7 +170,7 @@ async function renderPrediction() {
     document.getElementById("stats").innerHTML = "";
     
     if (predictions.length == 0) {
-        faceWidthSaved = -1.0;
+        window.faceWidthSaved = -1.0;
     }
     
     document.getElementById("warning").innerHTML = (window.modeTracker === "facetracker" && predictions.length === 0) ? warningMessage : "";
@@ -243,10 +243,10 @@ async function renderPrediction() {
             rollOptimized = roll * parseFloat(controls.rollMultiplier);
 
             // FACE DEPTH TRACKER
-            let faceWidth = prediction.boundingBox.bottomRight[0][1] - prediction.boundingBox.topLeft[0][1];
-            if(faceWidthSaved < 0) faceWidthSaved = faceWidth;
+            window.faceWidth = prediction.boundingBox.bottomRight[0] - prediction.boundingBox.topLeft[0];
+            if(window.faceWidthSaved < 0) window.faceWidthSaved = window.faceWidth;
             
-            faceDistance = map(faceWidth, faceWidthSaved * 0.5, faceWidthSaved * 1.5, 0.0, 1.0) * controls.distanceMultiplier;
+            window.faceDistance = map(window.faceWidth, window.faceWidthSaved * 0.5, window.faceWidthSaved * 1.5, 0.0, 1.0) * controls.distanceMultiplier;
 
             // FACE ORIENTATION TRACKER
             if (window.modeTracker == "facetracker") {
@@ -271,7 +271,7 @@ const progress = {
 const waitingSounds = () => new Promise((resolve, reject) => {
     let timer = setInterval(() => {
         // TODO: Setup for multiple calls to `getCountOfReadySound()`
-        progress.change(m1SoundPlayerClose.getCountOfReadySound()); // update loading info
+        progress.change(m1SoundPlayerFar.getCountOfReadySound()); // update loading info
         if (m1SoundPlayerClose.isReady() && m1SoundPlayerFar.isReady()) {
             clearInterval(timer);
             resolve();
