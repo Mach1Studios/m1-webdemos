@@ -280,7 +280,7 @@ const waitingSounds = () => new Promise((resolve, reject) => {
 });
 
 async function trackerMain() {
-    var info = document.getElementById("info");
+    const var info = document.getElementById("info");
     info.innerHTML = progress.element;
     document.getElementById("main").style.display = "none";
 
