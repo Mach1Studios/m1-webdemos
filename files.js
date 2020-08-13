@@ -1,7 +1,6 @@
 var files = {
 	"Content Demos": [
 		"Depth-AmpRoom-M1DualLayer",
-		"Depth-AmpRoom-M1+Object",
 		"Depth-Glados-M1DualLayer",
 		"Depth-Jazz-M1DualLayer",
 		"Music-LiveShow",
@@ -37,7 +36,6 @@ var files = {
 
 var tags = {
 	"Depth-AmpRoom-M1DualLayer": [ "music", "facetracking", "device", "mouse", "mach1decode" ],
-	"Depth-AmpRoom-M1+Object": [ "music", "facetracking", "device", "mouse", "mach1decode" ],
 	"Depth-Glados-M1DualLayer": [ "sound design", "facetracking", "device", "mouse", "mach1decode" ],
 	"Depth-Jazz-M1DualLayer": [ "music", "facetracking", "device", "mouse", "mach1decode" ],
 	"Music-Electronic": [ "music", "facetracking", "device", "mouse", "mach1decode" ],
