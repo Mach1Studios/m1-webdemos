@@ -17,7 +17,7 @@ const controls = {
 };
 window.controls = controls;
 
-const audioFiles8 = ['Titanic-Full/1', 'Titanic-Full/2', 'Titanic-Full/3', 'Titanic-Full/4', 'Titanic-Full/5', 'Titanic-Full/6', 'Titanic-Full/7', 'Titanic-Full/8'];
+const audioFiles8 = ['SoundScene-TitanicFull/1', 'SoundScene-TitanicFull/2', 'SoundScene-TitanicFull/3', 'SoundScene-TitanicFull/4', 'SoundScene-TitanicFull/5', 'SoundScene-TitanicFull/6', 'SoundScene-TitanicFull/7', 'SoundScene-TitanicFull/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
   const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';

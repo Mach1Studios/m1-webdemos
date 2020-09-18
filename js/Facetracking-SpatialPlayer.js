@@ -30,7 +30,7 @@ window.controls = controls;
 
 const audioFiles8 = ['T1', 'T2', 'T3', 'T4', 'B5', 'B6', 'B7', 'B8'];
 const getAudioFiles = (files) => {
-  const path = 'audio/m1spatial';
+  const path = 'audio/Decode-Examples/m1spatial';
   const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);

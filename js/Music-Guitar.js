@@ -17,7 +17,7 @@ const controls = {
 };
 window.controls = controls;
 
-const audioFiles8 = ['GuitarRecording/1', 'GuitarRecording/2', 'GuitarRecording/3', 'GuitarRecording/4', 'GuitarRecording/5', 'GuitarRecording/6', 'GuitarRecording/7', 'GuitarRecording/8'];
+const audioFiles8 = ['Music-Guitar/1', 'Music-Guitar/2', 'Music-Guitar/3', 'Music-Guitar/4', 'Music-Guitar/5', 'Music-Guitar/6', 'Music-Guitar/7', 'Music-Guitar/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
   const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
