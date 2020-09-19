@@ -182,14 +182,6 @@ h1 a {
 	margin-left: 4px;
 	display: none;
 	cursor: pointer;
-	background-color: var(--text-color);
-	background-size: var(--icon-size);
-	-webkit-mask-image: url(../files/ic_menu_black_24dp.svg);
-	-webkit-mask-position: 50% 50%;
-	-webkit-mask-repeat: no-repeat;
-	mask-image: url(../files/ic_menu_black_24dp.svg);
-	mask-position: 50% 50%;
-	mask-repeat: no-repeat;
 }
 
 #panel #sections {
@@ -539,7 +531,6 @@ iframe {
 /* mobile */
 
 @media all and ( max-width: 640px ) {
-
 	:root {
 		--header-height: 56px;
 		--icon-size: 24px;
@@ -549,8 +540,20 @@ iframe {
 		grid-template-columns: repeat(2, 1fr);
 	}
 
+	#expandButton {
+		height: 100% !important;
+		margin-top: 1px;
+
+		/* border-bottom: 1px solid black; */
+	}
+	#expandButton > img {
+		height: 100%;
+		width: 100%;
+
+		padding: 10px;
+	}
 	#panel #expandButton {
-		display: block;
+		display: flex;
 	}
 	#panel {
 		position: absolute;
