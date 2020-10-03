@@ -20,7 +20,10 @@ window.controls = controls;
 const audioFiles8 = ['SoundDesign-BinauralQuadrifiers/1', 'SoundDesign-BinauralQuadrifiers/2', 'SoundDesign-BinauralQuadrifiers/3', 'SoundDesign-BinauralQuadrifiers/4', 'SoundDesign-BinauralQuadrifiers/5', 'SoundDesign-BinauralQuadrifiers/6', 'SoundDesign-BinauralQuadrifiers/7', 'SoundDesign-BinauralQuadrifiers/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
+  
+  // NOTE: The new iPad now mimic to Mac OMG
+  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };
@@ -133,7 +136,7 @@ function selectTracker() {
         ? warningMessage
         : '';
     }
-  
+
   gimbal.enable();
   }
 }

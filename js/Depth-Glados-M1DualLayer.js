@@ -22,7 +22,10 @@ const audioFiles8Close = ['Depth-Glados/Close/1', 'Depth-Glados/Close/2', 'Depth
 const audioFiles8Far = ['Depth-Glados/Far/1', 'Depth-Glados/Far/2', 'Depth-Glados/Far/3', 'Depth-Glados/Far/4', 'Depth-Glados/Far/5', 'Depth-Glados/Far/6', 'Depth-Glados/Far/7', 'Depth-Glados/Far/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
+  
+  // NOTE: The new iPad now mimic to Mac OMG
+  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };

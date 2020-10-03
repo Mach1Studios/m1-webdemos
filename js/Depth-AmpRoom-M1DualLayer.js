@@ -22,7 +22,10 @@ const audioFiles8Close = ['Depth-AmpRoom/Close/1', 'Depth-AmpRoom/Close/2', 'Dep
 const audioFiles8Far = ['Depth-AmpRoom/Far/1', 'Depth-AmpRoom/Far/2', 'Depth-AmpRoom/Far/3', 'Depth-AmpRoom/Far/4', 'Depth-AmpRoom/Far/5', 'Depth-AmpRoom/Far/6', 'Depth-AmpRoom/Far/7', 'Depth-AmpRoom/Far/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
+
+  // NOTE: The new iPad now mimic to Mac OMG
+  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };
@@ -136,7 +139,7 @@ function selectTracker() {
         ? warningMessage
         : '';
     }
-  
+
   gimbal.enable();
   }
 }
@@ -636,3 +639,11 @@ window.onerror = (event) => {
 window.addEventListener('unhandledrejection', (event) => {
   document.getElementById('progress:debug').innerHTML = `<p>Error: ${event.reason}</p>`;
 });
+
+try {
+  document.getElementById('progress:debug').innerHTML = navigator.platform;
+} catch (e) {
+
+} finally {
+
+}

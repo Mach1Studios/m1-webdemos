@@ -20,7 +20,10 @@ window.controls = controls;
 const audioFiles8 = ['Recording-TibetanBowls/1', 'Recording-TibetanBowls/2', 'Recording-TibetanBowls/3', 'Recording-TibetanBowls/4', 'Recording-TibetanBowls/5', 'Recording-TibetanBowls/6', 'Recording-TibetanBowls/7', 'Recording-TibetanBowls/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
+  
+  // NOTE: The new iPad now mimic to Mac OMG
+  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };

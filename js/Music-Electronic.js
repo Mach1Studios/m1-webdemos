@@ -20,7 +20,10 @@ window.controls = controls;
 const audioFiles8 = ['Music-MAndD/1', 'Music-MAndD/2', 'Music-MAndD/3', 'Music-MAndD/4', 'Music-MAndD/5', 'Music-MAndD/6', 'Music-MAndD/7', 'Music-MAndD/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
+  
+  // NOTE: The new iPad now mimic to Mac OMG
+  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };

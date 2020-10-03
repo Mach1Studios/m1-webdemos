@@ -20,7 +20,10 @@ window.controls = controls;
 const audioFiles8 = ['Recording-Clock/1', 'Recording-Clock/2', 'Recording-Clock/3', 'Recording-Clock/4', 'Recording-Clock/5', 'Recording-Clock/6', 'Recording-Clock/7', 'Recording-Clock/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
+  
+  // NOTE: The new iPad now mimic to Mac OMG
+  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };

@@ -20,7 +20,10 @@ window.controls = controls;
 const audioFiles8 = ['SoundScene-Okavango/1', 'SoundScene-Okavango/2', 'SoundScene-Okavango/3', 'SoundScene-Okavango/4', 'SoundScene-Okavango/5', 'SoundScene-Okavango/6', 'SoundScene-Okavango/7', 'SoundScene-Okavango/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
+  
+  // NOTE: The new iPad now mimic to Mac OMG
+  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };

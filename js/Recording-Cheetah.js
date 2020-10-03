@@ -20,7 +20,10 @@ window.controls = controls;
 const audioFiles8 = ['Recording-Cheetah/1', 'Recording-Cheetah/2', 'Recording-Cheetah/3', 'Recording-Cheetah/4', 'Recording-Cheetah/5', 'Recording-Cheetah/6', 'Recording-Cheetah/7', 'Recording-Cheetah/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
+  
+  // NOTE: The new iPad now mimic to Mac OMG
+  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };

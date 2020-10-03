@@ -20,7 +20,10 @@ window.controls = controls;
 const audioFiles8 = ['Recording-Hippo/1', 'Recording-Hippo/2', 'Recording-Hippo/3', 'Recording-Hippo/4', 'Recording-Hippo/5', 'Recording-Hippo/6', 'Recording-Hippo/7', 'Recording-Hippo/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
+  
+  // NOTE: The new iPad now mimic to Mac OMG
+  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };
