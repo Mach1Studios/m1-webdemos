@@ -20,7 +20,10 @@ window.controls = controls;
 const audioFiles8 = ['SoundScene-TitanicFull/1', 'SoundScene-TitanicFull/2', 'SoundScene-TitanicFull/3', 'SoundScene-TitanicFull/4', 'SoundScene-TitanicFull/5', 'SoundScene-TitanicFull/6', 'SoundScene-TitanicFull/7', 'SoundScene-TitanicFull/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
+  
+  // NOTE: The new iPad now mimic to Mac OMG
+  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };

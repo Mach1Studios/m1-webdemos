@@ -20,7 +20,10 @@ window.controls = controls;
 const audioFiles8 = ['Recording-Chinatown/1', 'Recording-Chinatown/2', 'Recording-Chinatown/3', 'Recording-Chinatown/4', 'Recording-Chinatown/5', 'Recording-Chinatown/6', 'Recording-Chinatown/7', 'Recording-Chinatown/8'];
 const getAudioFiles = (files) => {
   const path = 'audio';
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
+  
+  // NOTE: The new iPad now mimic to Mac OMG
+  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };

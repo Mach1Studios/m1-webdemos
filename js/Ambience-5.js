@@ -20,7 +20,10 @@ window.controls = controls;
 const audioFiles8 = ['audio/Spatial-Ambiences/5/1', 'audio/Spatial-Ambiences/5/2', 'audio/Spatial-Ambiences/5/3', 'audio/Spatial-Ambiences/5/4', 'audio/Spatial-Ambiences/5/5', 'audio/Spatial-Ambiences/5/6', 'audio/Spatial-Ambiences/5/7', 'audio/Spatial-Ambiences/5/8'];
 const getAudioFiles = (files) => {
   const path = 'audio/m1spatial';
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
+  
+  // NOTE: The new iPad now mimic to Mac OMG
+  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };
