@@ -44,26 +44,23 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
 	function loadSounds() {
-    if (params.inputKind == 0) { // Input: MONO
-			audioFiles = ['audio/Encode-Examples/mono/1.ogg'];
-			mach1AudioLoader = new Mach1AudioLoader(audioFiles, 1);
-    }
-    else if (params.inputKind == 1) { // Input: STERO
-			audioFiles = ['audio/Encode-Examples/stereo/M1_SDKDemo_Orchestral_Stereo.ogg'];
-			mach1AudioLoader = new Mach1AudioLoader(audioFiles, 2);
-    }
-    else if (params.inputKind == 2) {
-      audioFiles = ['audio/Encode-Examples/quad/guitar-m1horizon.ogg'];
-      mach1AudioLoader = new Mach1AudioLoader(audioFiles, 4);
-    }
-		else {
-			audioFiles = ['audio/Encode-Examples/mono/1.ogg'];
-			mach1AudioLoader = new Mach1AudioLoader(audioFiles, 1);
-		}
+        if (params.inputKind == 0) { // Input: MONO
+    		audioFiles = ['audio/Encode-Examples/Encode-Examples/mono/1.ogg'];
+    		mach1AudioLoader = new Mach1AudioLoader(audioFiles, 1);
+        } else if (params.inputKind == 1) { // Input: STERO
+    		audioFiles = ['audio/Encode-Examples/Encode-Examples/stereo/M1_SDKDemo_Orchestral_Stereo.ogg'];
+    		mach1AudioLoader = new Mach1AudioLoader(audioFiles, 2);
+        } else if (params.inputKind == 2) {
+          audioFiles = ['audio/Encode-Examples/Encode-Examples/quad/guitar-m1horizon.ogg'];
+          mach1AudioLoader = new Mach1AudioLoader(audioFiles, 4);
+        } else {
+    		audioFiles = ['audio/Encode-Examples/Encode-Examples/mono/1.ogg'];
+    		mach1AudioLoader = new Mach1AudioLoader(audioFiles, 1);
+    	}
 		
-		if(mach1SoundPlayer) {
-			mach1SoundPlayer.remove();
-		}
+	   if(mach1SoundPlayer) {
+		  mach1SoundPlayer.remove();
+	   }
 		
 		mach1SoundPlayer = new Mach1SoundPlayer();
 		

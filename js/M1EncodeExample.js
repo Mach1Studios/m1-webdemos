@@ -52,13 +52,13 @@ document.addEventListener("DOMContentLoaded", function() {
     */
     function loadSounds() {
         if (params.inputKind == 0) { // Input: MONO
-            audioFiles = ['audio/mono/1.ogg'];
+            audioFiles = ['audio/Encode-Examples/mono/1.ogg'];
         } else if (params.inputKind == 1) { // Input: STERO
-            audioFiles = ['audio/stereo/M1_SDKDemo_Orchestral_Stereo_L.ogg', 'audio/stereo/M1_SDKDemo_Orchestral_Stereo_R.ogg'];
+            audioFiles = ['audio/Encode-Examples/stereo/M1_SDKDemo_Orchestral_Stereo_L.ogg', 'audio/Encode-Examples/stereo/M1_SDKDemo_Orchestral_Stereo_R.ogg'];
         } else if (params.inputKind == 2) {
-          audioFiles = ['audio/quad/guitar-m1horizon.ogg'];
+          audioFiles = ['audio/Encode-Examples/quad/guitar-m1horizon.ogg'];
         } else {
-            audioFiles = ['audio/mono/1.ogg'];
+            audioFiles = ['audio/Encode-Examples/mono/1.ogg'];
         }
             
         if(mach1SoundPlayer) {
