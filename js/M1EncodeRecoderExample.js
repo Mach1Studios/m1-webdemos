@@ -404,7 +404,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 lines[i].geometry.attributes.position.needsUpdate = true;
             }
 
-            mach1SoundPlayer.updateGains(vol);
+            mach1SoundPlayer.gains = vol;
 
             var angle = m1Decode.getCurrentAngle();
  
