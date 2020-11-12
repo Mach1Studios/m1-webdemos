@@ -6,7 +6,7 @@ window.modeTracker = '';
  * @type {Object}
  */
 const controls = {
-  yawMultiplier: 2,
+  yawMultiplier: 1.4,
   pitchMultiplier: 1,
   rollMultiplier: 1,
   distanceMultiplier: 1,
