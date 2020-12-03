@@ -40,7 +40,7 @@ const DecodeModule = new Mach1DecodeModule();
 const PlayerAmbisonic = document.createElement('audio');
 PlayerAmbisonic.src = audioFilesAmbi;
 // Create AudioContext, MediaElementSourceNode and FOARenderer.
-const ambiAudioContext = new AudioContext();
+const ambiAudioContext = PlayerM1.getAudioContext();
 const ambiAudioSource = ambiAudioContext.createMediaElementSource(PlayerAmbisonic);
 const foaRenderer = Omnitone.createFOARenderer(ambiAudioContext, {
   // The example audio is in the FuMa ordering (W,X,Y,Z). So remap the
@@ -132,11 +132,11 @@ function changePlayer() {
 
   if (window.playerTracker === 'mach1horizon') {
     PlayerAmbisonic.volume = 0.0;
-    PlayerM1.gains = 1.0;
+    PlayerM1.gains= [1.0,1.0,1.0,1.0];
   }
   if (window.playerTracker === 'ambisonic') {
     PlayerAmbisonic.volume = 1.0;
-    PlayerM1.gains = 0.0;
+    PlayerM1.gains= [0.0,0.0,0.0,0.0];
   }
 }
 
@@ -418,6 +418,10 @@ function Decode(yaw, pitch, roll) {
     m1Decode.beginBuffer();
     const decoded = m1Decode.decode(yaw, pitch, roll);
     m1Decode.endBuffer();
+
+    if (window.playerTracker === 'ambisonic') {
+      PlayerM1.gains= [0.0,0.0,0.0,0.0];
+    }
   }
 }
 
