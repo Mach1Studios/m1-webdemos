@@ -30,6 +30,7 @@ var files = {
 		"Mach1Encode-Example-Android",
 	],
 	"Utilities": [
+		"Comparison-Ambisonics",
 		"Mach1React-Test",
 	]
 };
@@ -38,6 +39,7 @@ var tags = {
 	"Depth-AmpRoom-M1DualLayer": [ "music", "facetracking", "device", "mouse", "mach1decode" ],
 	"Depth-Glados-M1DualLayer": [ "sound design", "facetracking", "device", "mouse", "mach1decode" ],
 	"Depth-Jazz-M1DualLayer": [ "music", "facetracking", "device", "mouse", "mach1decode" ],
+	"M1vsAmbi": ["comparison"],
 	"Music-Electronic": [ "music", "facetracking", "device", "mouse", "mach1decode" ],
 	"Music-LiveShow": [ "music", "facetracking", "device", "mouse", "mach1decode" ],
 	"Music-LiveShow2": [ "music", "facetracking", "device", "mouse", "mach1decode" ],
