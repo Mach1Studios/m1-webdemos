@@ -114,12 +114,13 @@ class Mach1SoundPlayer {
       const buf = input;
 
       this.#soundFilesCount = buf.numberOfChannels * 2;
+
       this.#buffer = buf;
 
-      this.#gainNode = this.#initArray();
-      this.#gains = this.#initArray();
-      this.#pannerNode = this.#initArray();
-      this.#smp = this.#initArray();
+      this.#gainNode = this.#initArray(this.#soundFilesCount);
+      this.#gains = this.#initArray(this.#soundFilesCount);
+      this.#pannerNode = this.#initArray(this.#soundFilesCount);
+      this.#smp = this.#initArray(this.#soundFilesCount);
 
       this.#isSoundReady = true;
     } else if (Array.isArray(input)) {
@@ -130,10 +131,10 @@ class Mach1SoundPlayer {
 
       this.#buffer = this.#initArray(audioFiles.length);
 
-      this.#gainNode = this.#initArray(audioFiles.length);
-      this.#gains = this.#initArray(audioFiles.length);
-      this.#pannerNode = this.#initArray(audioFiles.length);
-      this.#smp = this.#initArray(audioFiles.length);
+      this.#gainNode = this.#initArray(this.#soundFilesCount);
+      this.#gains = this.#initArray(this.#soundFilesCount);
+      this.#pannerNode = this.#initArray(this.#soundFilesCount);
+      this.#smp = this.#initArray(this.#soundFilesCount);
 
       audioFiles.forEach(this.#preload);
     } else {
@@ -156,7 +157,7 @@ class Mach1SoundPlayer {
   set gains(vols) {
     if (Array.isArray(vols)) {
       // FIXME: Need to refactor this part [switch to default array method like a forEach]
-      for (let i = 0; i < this.#soundFilesCount; i += 1) {
+      for (let i = 0; i < vols.length; i += 1) {
         this.#gains[i] = vols[i];
       }
     }
