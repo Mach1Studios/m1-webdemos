@@ -36,18 +36,17 @@ const getAudioFiles = (files) => {
 
 const PlayerM1 = new Mach1SoundPlayer(getAudioFiles(audioFilesM1));
 const DecodeModule = new Mach1DecodeModule();
+PlayerM1.gains = [1.0,1.0,1.0,1.0];
+var currentM1Gains = PlayerM1.gains;
 
 const PlayerAmbisonic = document.createElement('audio');
 PlayerAmbisonic.src = audioFilesAmbi;
 // Create AudioContext, MediaElementSourceNode and FOARenderer.
 const ambiAudioContext = PlayerM1.getAudioContext();
 const ambiAudioSource = ambiAudioContext.createMediaElementSource(PlayerAmbisonic);
-const foaRenderer = Omnitone.createFOARenderer(ambiAudioContext, {
-  // The example audio is in the FuMa ordering (W,X,Y,Z). So remap the
-  // channels to the ACN format.
-  channelMap: [0, 3, 1, 2]
-});
+const foaRenderer = Omnitone.createFOARenderer(ambiAudioContext);
 PlayerAmbisonic.loop = true;
+PlayerAmbisonic.volume = 0.0;
 // Make connection and start play. Hook up the user input for the playback.
 foaRenderer.initialize().then(function() {
   ambiAudioSource.connect(foaRenderer.input);
@@ -132,11 +131,15 @@ function changePlayer() {
 
   if (window.playerTracker === 'mach1horizon') {
     PlayerAmbisonic.volume = 0.0;
-    PlayerM1.gains= [1.0,1.0,1.0,1.0];
+    for (let i = 0; i < PlayerM1.gains.length; i++) {
+         PlayerM1.gains[i] = PlayerM1.gains[i] * 1.0;
+    }
   }
   if (window.playerTracker === 'ambisonic') {
     PlayerAmbisonic.volume = 1.0;
-    PlayerM1.gains= [0.0,0.0,0.0,0.0];
+    for (let i = 0; i < PlayerM1.gains.length; i++) {
+         PlayerM1.gains[i] = PlayerM1.gains[i] * 0.0; // mute
+    }
   }
 }
 
@@ -419,9 +422,16 @@ function Decode(yaw, pitch, roll) {
     const decoded = m1Decode.decode(yaw, pitch, roll);
     m1Decode.endBuffer();
 
+    // Set the spatial coefficients for the Mach1 audio players
+    PlayerM1.gains = decoded;
+
     if (window.playerTracker === 'ambisonic') {
-      PlayerM1.gains= [0.0,0.0,0.0,0.0];
+      for (let i = 0; i < PlayerM1.gains.length; i++) {
+           PlayerM1.gains[i] = PlayerM1.gains[i] * 0.0; // mute
+      }
     }
+
+    console.log(currentM1Gains);
   }
 }
 
