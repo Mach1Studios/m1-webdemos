@@ -770,6 +770,10 @@ var Mach1SoundPlayer = /*#__PURE__*/ (function () {
           _classPrivateFieldGet(this, _setGains).call(this);
         }
       },
+      /**
+       * Getting gains for all files
+       * @param  {Array} vols return last gain values by index
+       */
       get: function get() {
         return _classPrivateFieldGet(this, _gains);
       }

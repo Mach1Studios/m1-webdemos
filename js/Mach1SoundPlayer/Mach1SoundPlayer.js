@@ -292,19 +292,6 @@ class Mach1SoundPlayer {
     return this.#isPlaying;
   }
 
-  rewind(time = 0) {
-    this.stop();
-    this.play(time >= 0 ? time : 0);
-  }
-
-  isReady() {
-    return this.#isSoundReady && !this.#isDeleted;
-  }
-
-  isPlaying() {
-    return this.#isPlaying;
-  }
-  
   getAudioContext(){
     return this.audioContext; 
   }

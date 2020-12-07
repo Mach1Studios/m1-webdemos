@@ -23,7 +23,7 @@ const controls = {
 window.controls = controls;
 
 const audioFilesM1 = ['M1vsAmbi/1', 'M1vsAmbi/2', 'M1vsAmbi/3', 'M1vsAmbi/4'];
-const audioFilesAmbi = ['audio/M1vsAmbi/4ch_B_FuMaNorm_FuMaOrd_speech.ogg'];
+const audioFilesAmbi = ['audio/M1vsAmbi/guitar-foa-acnsn3d.ogg'];
 const getAudioFiles = (files) => {
   const path = 'audio';
 
@@ -425,13 +425,12 @@ function Decode(yaw, pitch, roll) {
     // Set the spatial coefficients for the Mach1 audio players
     PlayerM1.gains = decoded;
 
+    // Mute Mach1SoundPlayer
     if (window.playerTracker === 'ambisonic') {
       for (let i = 0; i < PlayerM1.gains.length; i++) {
            PlayerM1.gains[i] = PlayerM1.gains[i] * 0.0; // mute
       }
     }
-
-    console.log(currentM1Gains);
   }
 }
 
@@ -702,6 +701,11 @@ function Stop() {
     PlayerM1.stop();
     PlayerAmbisonic.pause();
     ambiAudioContext.suspend();
+    if (!PlayerM1.isPlaying()){
+      PlayerM1.rewind(0);
+      PlayerM1.stop();
+      PlayerAmbisonic.currentTime = 0;
+    }
 }
 
 function DisplayDebug() {
