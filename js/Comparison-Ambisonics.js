@@ -132,13 +132,13 @@ function changePlayer() {
   if (window.playerTracker === 'mach1horizon') {
     PlayerAmbisonic.volume = 0.0;
     for (let i = 0; i < PlayerM1.gains.length; i++) {
-         PlayerM1.gains[i] = PlayerM1.gains[i] * 1.0;
+      PlayerM1.volume = 1.0;
     }
   }
   if (window.playerTracker === 'ambisonic') {
     PlayerAmbisonic.volume = 1.0;
     for (let i = 0; i < PlayerM1.gains.length; i++) {
-         PlayerM1.gains[i] = PlayerM1.gains[i] * 0.0; // mute
+      PlayerM1.volume = 0.0;
     }
   }
 }
