@@ -5,6 +5,30 @@ const videoOutput = document.getElementById('output');
 const bosearStats = document.getElementById('bosearstats');
 const touchStats = document.getElementById('touchstats');
 
+$(document).keydown(function(e) {
+    if(e.keyCode == 84){
+      console.log("T");
+      const ele = document.getElementsByName('playtype');
+      for (let i = 0; i < ele.length; i += 1) {
+        if (ele[i].hasAttribute("checked")) {
+          ele[i].removeAttribute("checked");
+          ele[i].checked = false;
+        } else {
+          ele[i].setAttribute("checked", "checked");
+        }
+      }
+      changePlayer();
+    }
+    if(e.keyCode == 37){ //left arrow key
+    }
+    if(e.keyCode == 38){ //up arrow key
+    }
+    if(e.keyCode == 39){ //right arrow key
+    }
+    if(e.keyCode == 40){ //down arrow key
+    }
+});
+
 /**
  * Default contrlols configuration
  * @type {Object}
@@ -124,22 +148,20 @@ var gimbal = new Gimbal();
 function changePlayer() {
   const ele = document.getElementsByName('playtype');
   for (let i = 0; i < ele.length; i += 1) {
-    if (ele[i].checked) {
+    if (ele[i].hasAttribute("checked")) {
       window.playerTracker = ele[i].value;
     }
   }
 
   if (window.playerTracker === 'mach1horizon') {
+    console.log("Listening to Mach1Horizon mix");
     PlayerAmbisonic.volume = 0.0;
-    for (let i = 0; i < PlayerM1.gains.length; i++) {
-      PlayerM1.volume = 1.0;
-    }
+    PlayerM1.volume = 1.0;
   }
   if (window.playerTracker === 'ambisonic') {
+    console.log("Listening to ambisonic mix");
     PlayerAmbisonic.volume = 1.0;
-    for (let i = 0; i < PlayerM1.gains.length; i++) {
-      PlayerM1.volume = 0.0;
-    }
+    PlayerM1.volume = 0.0;
   }
 }
 
@@ -428,7 +450,7 @@ function Decode(yaw, pitch, roll) {
     // Mute Mach1SoundPlayer
     if (window.playerTracker === 'ambisonic') {
       for (let i = 0; i < PlayerM1.gains.length; i++) {
-           PlayerM1.gains[i] = PlayerM1.gains[i] * 0.0; // mute
+        PlayerM1.volumes = 0.0;
       }
     }
   }
