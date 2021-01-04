@@ -208,6 +208,7 @@ async function setupCamera() {
 }
 
 let faceWidthSaved = -1.0;
+var dSliderVal = 1.0;
 
 async function renderPrediction() {
   const predictions = await model.estimateFaces(video);
@@ -397,8 +398,13 @@ function Decode(yaw, pitch, roll) {
 
     // APPLY DISTANCE CROSSFADE BETWEEN TWO MACH1SPATIAL MIXES
     window.faceDistanceFar = Math.abs(window.faceDistance - 1.0);
-    PlayerClose.gains = decoded.map(x => x * window.faceDistance);
-    PlayerFar.gains = decoded.map(x => x * window.faceDistanceFar);
+    if (window.modeTracker === 'touch') {
+      PlayerClose.gains = decoded.map(x => x * dSliderVal * controls.distanceMultiplier);
+      PlayerFar.gains = decoded.map(x => x * Math.abs(dSliderVal - 1.0) * controls.distanceMultiplier);
+    } else {
+      PlayerClose.gains = decoded.map(x => x * window.faceDistance);
+      PlayerFar.gains = decoded.map(x => x * window.faceDistanceFar);
+    }
   }
 }
 
@@ -614,6 +620,12 @@ function animate() {
   Decode(yaw, pitch, roll);
   // Apply orientation (yaw) to compass UI
   document.getElementById('compass').style.transform = `rotate(${yaw}deg)`;
+  // Apply distance value to distance slider UI
+  if (window.modeTracker === 'touch') {
+    // do nothing
+  } else {
+    document.getElementById('dSlider').value = window.faceDistance;
+  }
 
   // Check and reconnect OSC
   // Apply orientation as output OSC messages
@@ -635,16 +647,19 @@ function animate() {
   }
 }
 
+// Update the JS values for distance on Touch Mode UI
+function updateDistanceInput(val){
+  dSliderVal = document.getElementById("dSlider").value;
+}
+
 function Play() {
-    PlayerClose.play();
-     if (window.modeTracker == "facetracker") {
-        PlayerFar.play();
-     }
+  PlayerClose.play();
+  PlayerFar.play();
 }
 
 function Stop() {
-    PlayerClose.stop();
-    PlayerFar.stop();
+  PlayerClose.stop();
+  PlayerFar.stop();
 }
 
 function DisplayDebug() {
@@ -669,11 +684,3 @@ window.onerror = (event) => {
 window.addEventListener('unhandledrejection', (event) => {
   document.getElementById('progress:debug').innerHTML = `<p>Error: ${event.reason}</p>`;
 });
-
-try {
-  document.getElementById('progress:debug').innerHTML = navigator.platform;
-} catch (e) {
-
-} finally {
-
-}
