@@ -343,6 +343,12 @@
               height: 100%;
               z-index: -1;
             }
+            input[type=range][orient=vertical]{
+                writing-mode: bt-lr; /* IE */
+                -webkit-appearance: slider-vertical; /* WebKit */
+                padding: 0 5px;
+                position: relative;
+            }
         </style>
     </head>
     <body>
@@ -405,6 +411,14 @@
                         <input id=rotationRoll readonly size=2>
                     </form>
                 </div>
+            </div>
+            <div class="containerOuter" style="position: absolute; top: 20px; left: 65vw;">
+              <center>DISTANCE</center>
+              <div class="containerInner" style="width:auto;">
+                <form>
+                  <input id="dSlider" type="range" orient="vertical" name="distInput" min="0.001" step="0.0001" max="1.0" value="1.0" oninput="updateDistanceInput(this.value);">
+                </form>
+              </div>
             </div>
             <div id="touchstats" style="display:none;margin:0;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50vw;height:auto;">
               <div class="background"><img src="img/touch-compass.svg" style="width:50vw;height:auto;"/></div>
