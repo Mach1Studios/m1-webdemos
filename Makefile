@@ -15,10 +15,13 @@ endif
 install: 
 	# install all deps
 
+download-audiofiles:
+	aws s3 cp s3://Bucket/Folder LocalFolder --recursive
+
 # TODO: improve caching when scaled up, apply cache age 0 only to files that change often
 deploy:
 	# deploys build to public AWS bucket
-	# NOTE: relies on `mach1` keys in `~/.aws/credentials`
+	# NOTE: relies on `s3_profile` with keys in `~/.aws/credentials`
 	aws s3 sync ./ s3://$(s3_bucket_name) --content-type text/html --cache-control no-cache --acl public-read --metadata-directive REPLACE --exclude "*" --include "*.html" --profile $(s3_profile)
 	aws s3 sync ./ s3://$(s3_bucket_name) --content-type text/plain --cache-control no-cache --acl public-read --metadata-directive REPLACE --exclude "*" --include "*.txt" --profile $(s3_profile)
 	aws s3 sync ./ s3://$(s3_bucket_name) --content-type text/css --cache-control no-cache --acl public-read --metadata-directive REPLACE --exclude "*" --include "*.css" --profile $(s3_profile)

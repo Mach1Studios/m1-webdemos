@@ -333,6 +333,26 @@ wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Piano/8.mp3
 wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Piano/8.ogg
 cd ../../
 
+mkdir -p audio/Music-Orchestra
+cd audio/Music-Orchestra
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/1.mp3
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/1.ogg
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/2.mp3
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/2.ogg
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/3.mp3
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/3.ogg
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/4.mp3
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/4.ogg
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/5.mp3
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/5.ogg
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/6.mp3
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/6.ogg
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/7.mp3
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/7.ogg
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/8.mp3
+wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Music-Orchestra/8.ogg
+cd ../../
+
 mkdir -p audio/Recording-Cheetah
 cd audio/Recording-Cheetah
 wget https://mach1-webdemos-public.s3.amazonaws.com/audio/Recording-Cheetah/1.mp3
