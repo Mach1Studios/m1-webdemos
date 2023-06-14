@@ -622,6 +622,20 @@ function animate() {
   Decode(yaw, pitch, roll);
   // Apply orientation (yaw) to compass UI
   document.getElementById('compass').style.transform = `rotate(${yaw}deg)`;
+
+  // Check and reconnect OSC
+  // Apply orientation as output OSC messages
+  if (osc.status() === OSC.STATUS.IS_OPEN) {
+    /**
+     * Receive OSC message with address "/orientation" and three float arguements
+     * Yaw (left -> right | where rotating left is negative)
+     * Pitch (down -> up | where rotating down is negative)
+     * Roll (top-pointing-left -> top-pointing-right | where rotating top of object left is negative)
+     *
+     * @type {Class}
+     */
+    osc.send(new OSC.Message('/orientation', yaw, pitch, roll));
+  }
 }
 
 // eslint-disable-next-line
