@@ -33,7 +33,6 @@ const getAudioFiles = (files) => {
 
 const Player = new Mach1SoundPlayer(getAudioFiles(audioFiles8));
 const DecodeModule = new Mach1DecodeModule();
-const osc = new OSC();
 
 tf.setBackend('webgl');
 
@@ -415,12 +414,6 @@ function Decode(yaw, pitch, roll) {
 }
 
 // ------------------------
-// OSC Handling
-osc.open({
-  port: 9898
-});
-
-// ------------------------
 // Visual rendering adopted from https://threejs.org/examples/webgl_materials_normalmap.html
 let container; let stats; let loader;
 let camera; let scene; let renderer;
@@ -628,25 +621,6 @@ function animate() {
   Decode(yaw, pitch, roll);
   // Apply orientation (yaw) to compass UI
   document.getElementById('compass').style.transform = `rotate(${yaw}deg)`;
-
-  // Check and reconnect OSC
-  // Apply orientation as output OSC messages
-  if (osc.status() === OSC.STATUS.IS_OPEN) {
-    /**
-     * Receive OSC message with address "/orientation" and three float arguements
-     * Yaw (left -> right | where rotating left is negative)
-     * Pitch (down -> up | where rotating down is negative)
-     * Roll (top-pointing-left -> top-pointing-right | where rotating top of object left is negative)
-     *
-     * @type {Class}
-     */
-    osc.send(new OSC.Message('/orientation', yaw, pitch, roll));
-  } else if (osc.status() === OSC.STATUS.IS_CLOSED) {
-    osc.open({
-      // TODO: custom port output
-      port: 9898
-    });
-  }
 }
 
 // eslint-disable-next-line
@@ -657,6 +631,20 @@ function DisplayDebug() {
     modelview.style.display = '';
   } else {
     modelview.style.display = 'none';
+  }
+}
+
+// eslint-disable-next-line
+function EnableOSC() {
+  if (osc.status() === OSC.STATUS.IS_CLOSED) {
+    osc.open({
+      // TODO: custom port output
+      port: 9898
+    });
+    document.getElementById("osc-status-button").value = "OSC Enabled";
+  } else {
+    osc.close();
+    document.getElementById("osc-status-button").value = "OSC Disabled";
   }
 }
 
