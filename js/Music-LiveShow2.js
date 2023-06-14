@@ -33,6 +33,7 @@ const getAudioFiles = (files) => {
 
 const Player = new Mach1SoundPlayer(getAudioFiles(audioFiles8));
 const DecodeModule = new Mach1DecodeModule();
+const osc = new OSC();
 
 tf.setBackend('webgl');
 
@@ -636,7 +637,7 @@ function DisplayDebug() {
 
 // eslint-disable-next-line
 function EnableOSC() {
-  if (osc.status() === OSC.STATUS.IS_CLOSED) {
+  if (osc.status() !== OSC.STATUS.IS_OPEN || osc.status() !== OSC.STATUS.IS_CONNECTING) {
     osc.open({
       // TODO: custom port output
       port: 9898
