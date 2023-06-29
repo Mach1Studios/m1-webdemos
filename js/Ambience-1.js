@@ -25,8 +25,9 @@ const getAudioFiles = (files) => {
   const path = 'audio/m1spatial';
   
   // NOTE: The new iPad now mimic to Mac OMG
-  const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
-  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
+  // const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
+  // NOTE: Ok, now all safari browsers have some trouble with ogg
+  const extention = /iPhone|iPad|iPod|Safari/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
 
   return files.map((file) => `${path}/${file}.${extention}`);
 };
